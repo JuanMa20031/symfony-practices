@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
+use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -12,12 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class PageController extends AbstractController
 {
     #[Route('/')]
-    public function home(Request $request): Response
+    public function home(EntityManagerInterface $entityManager): Response
     {
-        $search = $request->get('search');
+        $comments = $entityManager->getRepository(Comment::class)->findBy([],[
+            'id' => 'DESC'
+        ]);
 
         return $this->render('home.html.twig', [
-            'search' => $search
+            'comments' => $comments
         ]);
     }
 }
